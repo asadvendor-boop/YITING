@@ -1,0 +1,25 @@
+{
+  "artifact_class": "external_uptime_monitoring",
+  "format": "uptime-monitoring-v1",
+  "generated_at": "2026-06-28T18:18:23.504232+00:00",
+  "monitors": [
+    {
+      "app": "yiting",
+      "enabled": true,
+      "interval_seconds": 60,
+      "monitor_url": "https://yiting.47.84.232.193.sslip.io/ready",
+      "target_url": "https://yiting.47.84.232.193.sslip.io"
+    },
+    {
+      "app": "cotenant",
+      "enabled": true,
+      "interval_seconds": 60,
+      "monitor_url": "https://cotenant.47.84.232.193.sslip.io/ready",
+      "target_url": "https://cotenant.47.84.232.193.sslip.io"
+    }
+  ],
+  "provider": "Alibaba ECS Caddy public HTTPS health checks",
+  "submission_evidence": true,
+  "verified_live": true,
+  "_redaction_note": "Co-tenant application identifiers, network names, and URLs in this record were replaced with the neutral token 'cotenant' before publication (2026-07-18). Measurements, timestamps, and verdicts are unmodified."
+}

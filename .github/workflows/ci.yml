@@ -1,0 +1,67 @@
+name: YITING CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: |
+          uv lock --check
+          uv sync --locked --all-groups
+
+      - name: Run smoke tests
+        run: uv run make smoke
+
+      - name: Run full test suite
+        run: uv run python -m pytest tests/ -x -q --tb=short
+
+      - name: Verify installed dependencies
+        run: uv pip check
+
+      - name: Check submission readiness
+        run: |
+          uv run python scripts/submission_audit.py
+          uv run python scripts/submission_status.py
+
+  dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dashboard dependencies
+        run: npm ci
+
+      - name: Build dashboard
+        run: npm run build
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high

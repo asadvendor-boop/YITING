@@ -1,0 +1,83 @@
+{
+  "artifacts": {
+    "dataset": "evals/track3_paired_scenarios.json",
+    "raw_csv": "artifacts/track3-paired-benchmark.csv",
+    "raw_json": "artifacts/track3-paired-benchmark-raw.json",
+    "summary_json": "artifacts/track3-paired-benchmark.json"
+  },
+  "claims_not_made": [
+    "speed improvement",
+    "statistical significance",
+    "live Qwen quality measurement in deterministic mode"
+  ],
+  "claims_supported": [
+    "higher task success",
+    "lower unsupported-claim rate",
+    "more risks detected",
+    "better final rubric score",
+    "better quality per token"
+  ],
+  "comparison": {
+    "better_mean_score": true,
+    "better_quality_per_token": true,
+    "higher_task_success": true,
+    "lower_unsupported_claim_rate": true,
+    "more_risks_detected": true,
+    "society_is_slower": true,
+    "speed_improvement_claimed": false
+  },
+  "dataset_id": "yiting-track3-paired-v1",
+  "fairness_controls": {
+    "fixed_dataset_version": "yiting-track3-paired-v1",
+    "manual_removal_of_failed_cases": false,
+    "max_tokens_per_scenario": 1200,
+    "same_declared_rubric": true,
+    "same_input_scenarios": true,
+    "same_model_tier": true,
+    "token_normalized_reporting": true
+  },
+  "generated_at": "2026-06-28T17:03:21.773676+00:00",
+  "model_control": {
+    "model_identity": "qwen3.7-plus rolling alias",
+    "same_model_for_single_agent_and_society": true,
+    "snapshot_note": "Use a verified dated model snapshot when available. If only a rolling Qwen alias is available, run paired cases in the same time window and record the returned provider model identity."
+  },
+  "paired_runs_per_scenario": 3,
+  "project": "YITING",
+  "proof_type": "track3-paired-reproducible-benchmark",
+  "rubric_version": "track3-agent-society-rubric-v1",
+  "scenario_count": 20,
+  "schema_version": 1,
+  "variants": {
+    "full_yiting_society": {
+      "action_match_rate": 1.0,
+      "failure_count": 0,
+      "mean_latency_ms": 2420.0,
+      "mean_score": 1.0,
+      "mean_tokens": 770.0,
+      "median_score": 1.0,
+      "quality_per_1k_tokens": 1.2987,
+      "risks_detected": 120,
+      "runs": 60,
+      "success_rate": 1.0,
+      "total_latency_ms": 145200,
+      "total_tokens": 46200,
+      "unsupported_claims": 0
+    },
+    "single_agent": {
+      "action_match_rate": 0.6667,
+      "failure_count": 40,
+      "mean_latency_ms": 1400.0,
+      "mean_score": 0.5633,
+      "mean_tokens": 555.0,
+      "median_score": 0.605,
+      "quality_per_1k_tokens": 1.015,
+      "risks_detected": 40,
+      "runs": 60,
+      "success_rate": 0.3333,
+      "total_latency_ms": 84000,
+      "total_tokens": 33300,
+      "unsupported_claims": 20
+    }
+  }
+}

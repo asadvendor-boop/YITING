@@ -1,0 +1,7 @@
+name: yiting
+
+# ECS VM edition. This file intentionally mirrors the shared-host profile used
+# on the judging Alibaba ECS VM. It is kept as a stable link target for the
+# submission proof and should stay in parity with deploy/shared-host.
+include:
+  - ../shared-host/compose.prod.yml

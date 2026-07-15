@@ -1,0 +1,92 @@
+{
+  "apps": [
+    {
+      "app": "yiting",
+      "evidence_persisted": true,
+      "health_probe": {
+        "final_url": "https://yiting.47.84.232.193.sslip.io/ready",
+        "passed": true,
+        "status_code": 200,
+        "url": "https://yiting.47.84.232.193.sslip.io/ready"
+      },
+      "healthy_after_restart": true,
+      "logs_persisted": true,
+      "proof_paths": {
+        "evidence": {
+          "entry_count": 0,
+          "exists": true,
+          "kind": "file",
+          "non_empty": true,
+          "path": "/var/lib/docker/volumes/yiting_yiting-data/_data/yiting.db-wal",
+          "size_bytes": 3411392
+        },
+        "logs": {
+          "entry_count": 32,
+          "exists": true,
+          "kind": "directory",
+          "non_empty": true,
+          "path": ".",
+          "size_bytes": 358100
+        },
+        "state": {
+          "entry_count": 0,
+          "exists": true,
+          "kind": "file",
+          "non_empty": true,
+          "path": "/var/lib/docker/volumes/yiting_yiting-data/_data/yiting.db",
+          "size_bytes": 192512
+        }
+      },
+      "state_persisted": true,
+      "url": "https://yiting.47.84.232.193.sslip.io/ready"
+    },
+    {
+      "app": "cotenant",
+      "evidence_persisted": true,
+      "health_probe": {
+        "final_url": "https://cotenant.47.84.232.193.sslip.io/api/v1/ready",
+        "passed": true,
+        "status_code": 200,
+        "url": "https://cotenant.47.84.232.193.sslip.io/api/v1/ready"
+      },
+      "healthy_after_restart": true,
+      "logs_persisted": true,
+      "proof_paths": {
+        "evidence": {
+          "entry_count": 4,
+          "exists": true,
+          "kind": "directory",
+          "non_empty": true,
+          "path": "/var/lib/docker/volumes/cotenant_cotenant-evidence/_data",
+          "size_bytes": 13020
+        },
+        "logs": {
+          "entry_count": 32,
+          "exists": true,
+          "kind": "directory",
+          "non_empty": true,
+          "path": ".",
+          "size_bytes": 358100
+        },
+        "state": {
+          "entry_count": 24,
+          "exists": true,
+          "kind": "directory",
+          "non_empty": true,
+          "path": "/var/lib/docker/volumes/platform_platform-postgres-data/_data",
+          "size_bytes": 38421
+        }
+      },
+      "state_persisted": true,
+      "url": "https://cotenant.47.84.232.193.sslip.io/api/v1/ready"
+    }
+  ],
+  "artifact_class": "live_app_restart_resilience",
+  "format": "shared-ecs-app-restart-resilience-v1",
+  "generated_at": "2026-07-08T20:53:49.681526+00:00",
+  "host_rebooted": false,
+  "restart_scope": "app-scoped Docker Compose service restart",
+  "submission_evidence": true,
+  "verified_live": true,
+  "_redaction_note": "Co-tenant application identifiers, network names, and URLs in this record were replaced with the neutral token 'cotenant' before publication (2026-07-18). Measurements, timestamps, and verdicts are unmodified."
+}

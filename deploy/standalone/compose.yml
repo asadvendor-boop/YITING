@@ -1,0 +1,39 @@
+name: yiting-standalone
+
+include:
+  - ../shared-host/compose.prod.yml
+
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      YITING_DOMAIN: ${YITING_DOMAIN:?set YITING_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./Caddyfile.example:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - yiting-edge
+    logging:
+      driver: local
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+networks:
+  yiting-edge:
+    external: false
+    name: yiting-standalone-edge
+  yiting-internal:
+    external: false
+    internal: true
+    name: yiting-standalone-internal
+
+volumes:
+  caddy-data:
+  caddy-config:

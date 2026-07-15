@@ -1,0 +1,138 @@
+{
+  "checks": [
+    {
+      "detail": "YITING_PYTHON_IMAGE, YITING_DASHBOARD_IMAGE, COTENANT_APP_IMAGE, COTENANT_VICTIM_IMAGE",
+      "name": "production images are pinned by immutable digest",
+      "ok": true
+    },
+    {
+      "detail": "used=52.5% free_gib=42.38",
+      "name": "disk use below 80%: /opt/apps",
+      "ok": true
+    },
+    {
+      "detail": "used=52.5% free_gib=42.38",
+      "name": "disk use below 80%: /var/lib/docker",
+      "ok": true
+    },
+    {
+      "detail": "swap_used=0.0% threshold=25.0%",
+      "name": "no sustained swap thrashing",
+      "ok": true
+    },
+    {
+      "detail": "yiting-operator-1=1.3%; yiting-triage-1=0.6%; yiting-commander-1=1.3%; yiting-diagnosis-1=1.3%; yiting-safety_reviewer-1=1.3%; yiting-recorder-heartbeat-1=0.3%; yiting-victim-1=0.3%; yiting-gateway-1=1.3%; yiting-dashboard-1=0.4%",
+      "name": "container memory below 75% of limit after warm-up",
+      "ok": true
+    },
+    {
+      "detail": "yiting_containers=9",
+      "name": "no OOM-killed containers",
+      "ok": true
+    },
+    {
+      "detail": "count=9",
+      "name": "YITING containers discovered",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "YITING containers do not mount /run/cotenant or host-agent socket",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "YITING containers do not mount Docker socket",
+      "ok": true
+    },
+    {
+      "detail": "gid=997 offenders=none",
+      "name": "YITING containers do not receive cotenant-control GID",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "/run/cotenant absent inside every YITING container",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "YITING SQLite profile has no PostgreSQL credentials",
+      "ok": true
+    },
+    {
+      "detail": "all present",
+      "name": "all expected YITING shared-host services are running",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "YITING containers do not join COTENANT networks",
+      "ok": true
+    },
+    {
+      "detail": "none",
+      "name": "YITING SQLite profile does not join database networks",
+      "ok": true
+    },
+    {
+      "detail": "gateway,dashboard",
+      "name": "only gateway and dashboard join yiting-edge",
+      "ok": true
+    },
+    {
+      "detail": "commander,diagnosis,operator,safety_reviewer,triage",
+      "name": "only YITING live-agent workers join yiting-egress",
+      "ok": true
+    },
+    {
+      "detail": "all present",
+      "name": "all YITING containers join yiting-internal",
+      "ok": true
+    },
+    {
+      "detail": "approved",
+      "name": "yiting-edge has only approved members",
+      "ok": true
+    },
+    {
+      "detail": "approved",
+      "name": "yiting-internal has only approved members",
+      "ok": true
+    },
+    {
+      "detail": "approved",
+      "name": "yiting-egress has only approved members",
+      "ok": true
+    },
+    {
+      "detail": "blocked",
+      "name": "YITING gateway cannot resolve COTENANT private services",
+      "ok": true
+    },
+    {
+      "detail": "ss public_ports=[22, 80, 443] allowed=[22, 80, 443]",
+      "name": "only Caddy and restricted SSH listen publicly",
+      "ok": true
+    },
+    {
+      "detail": "billing_valid_until=2099-12-31 judging_end=2026-07-31",
+      "name": "ECS billing extends beyond judging end",
+      "ok": true
+    },
+    {
+      "detail": "yiting",
+      "name": "external uptime monitoring configured",
+      "ok": true
+    },
+    {
+      "detail": "yiting+cotenant app restart resilience verified",
+      "name": "app restart resilience checked",
+      "ok": true
+    }
+  ],
+  "format": "shared-ecs-ops-acceptance-v1",
+  "generated_at": "2026-07-08T20:53:53.102120+00:00",
+  "passed": true,
+  "_redaction_note": "Co-tenant application identifiers, network names, and URLs in this record were replaced with the neutral token 'cotenant' before publication (2026-07-18). Measurements, timestamps, and verdicts are unmodified."
+}

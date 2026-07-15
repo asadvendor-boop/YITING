@@ -1,0 +1,38 @@
+{
+  "dataset_id": "yiting-track3-live-paired-v1",
+  "scenarios": 20,
+  "live": true,
+  "fairness_controls": {
+    "live": true,
+    "deterministic": false,
+    "same_incidents_both_arms": true,
+    "same_model_family": "qwen3.7-plus (diagnosis tier)",
+    "solo_receives_complete_task": true,
+    "rubric_frozen_before_run": true,
+    "no_retries_or_cherry_picking": true,
+    "raw_responses_preserved": true,
+    "expected_action_source": "select_runbook() policy output for each fault (system's own definition of correct; identical target for both arms)",
+    "token_usage_measured_and_published_per_incident": true
+  },
+  "solo": {
+    "mean_final_score": 0.7625,
+    "mean_finding_recall": 0.875,
+    "mean_risk_recall": 0.925,
+    "total_unsupported_claims": 9,
+    "success_count": 5,
+    "mean_tokens": 2140.55
+  },
+  "society": {
+    "mean_final_score": 0.8438,
+    "mean_finding_recall": 1.0,
+    "mean_risk_recall": 1.0,
+    "total_unsupported_claims": 11,
+    "success_count": 8,
+    "mean_tokens": 5365.6
+  },
+  "chain_scoring_correction": "Initial runner implementation scored solo evidence_chain at 0.55 (the deterministic harness constant), contradicting this dataset's scoring_method (solo: 1.0, 'not used to advantage either arm'). Rows and this summary are rescored to the spec; the correction adds +0.045 to every solo final_score. Nothing else changed.",
+  "pairs_won_by_society": 10,
+  "ties": 4,
+  "pairs_won_by_solo": 6,
+  "fairness_controls_correction": "The originally declared equal_aggregate_token_cap_per_incident=4000 was never enforced on either arm and is retracted; per-incident token usage is measured and published in every row instead. See the dataset's post_run_corrections."
+}

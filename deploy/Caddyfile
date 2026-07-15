@@ -1,0 +1,140 @@
+# YITING — Caddy Configuration
+# ────────────────────────────────────────────────────────────────
+# Public:     / (landing page)
+# Public:     /dashboard/* (read-only judge dashboard when YITING_LIVE_CHAOS is unset)
+# Public:     /stats /incidents /agent-status /suppression-rules /health /ready (read-only)
+# Public:     /agent-skills (skill-contract review manifest) and /mcp (real read-only MCP server)
+# Public:     /evidence/* (public chain verification for judges)
+# Protected:  /approve/* (Caddy basic_auth + X-Proxy-Secret → Gateway)
+# Internal:   /heartbeat /submit (agents only — NOT exposed through Caddy)
+# Internal:   Gateway (:8000) and victim-app (:9000) bound to 127.0.0.1
+#
+# PUBLIC JUDGE MODE:
+#   /dashboard is intentionally public for frictionless hackathon judging.
+#   Paid/mutating scenario triggers remain blocked by the dashboard API unless
+#   the dashboard process is explicitly started with YITING_LIVE_CHAOS=1 for
+#   the private recording run.
+#
+# DEPLOY SETUP:
+#   1. Set YITING_DOMAIN in Caddy's systemd environment
+#   2. Set YITING_JUDGE_USER and YITING_JUDGE_HASH in Caddy's systemd env
+#      for /approve/* only (scripts/generate_deployment_env.py writes both)
+#   3. Set APPROVAL_PROXY_SECRET in Caddy's systemd env
+#      (must match APPROVAL_PROXY_SECRET in Gateway .env)
+#   4. Confirm landing files are at the root path below
+# ────────────────────────────────────────────────────────────────
+
+{
+    # Global options
+}
+
+{$YITING_DOMAIN:localhost} {
+    # ── Security Headers (applied to all routes) ───────────────
+    header {
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        -Server
+    }
+
+    # ── Dashboard (public read-only judge surface) ─────────────
+    # Must come BEFORE Gateway routes to match /dashboard/* first
+    handle /dashboard* {
+        reverse_proxy 127.0.0.1:3000
+    }
+
+    # ── Approval UI (password-protected + proxy secret) ────────
+    # Three-layer auth: Caddy basic_auth → X-Proxy-Secret → Gateway bcrypt
+    # This route is state-changing and stays protected even when dashboard is public.
+    handle /approve/* {
+        basic_auth {
+            {$YITING_JUDGE_USER} {$YITING_JUDGE_HASH}
+        }
+        reverse_proxy 127.0.0.1:8000 {
+            header_up X-Proxy-Secret {$APPROVAL_PROXY_SECRET}
+        }
+    }
+
+    # ── Gateway READ-ONLY API (public — consumed by dashboard) ─
+    handle /stats {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /stats/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /room-messages/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /incidents {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /incidents/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /agent-status {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /suppression-rules {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /agent-skills {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # ── MCP server (public, read-only JSON-RPC over the skill registry) ─
+    # POST-only; serves the same seven contracts as /agent-skills plus the
+    # committed Track 3 benchmark. No tool can mutate state or spend tokens.
+    handle /mcp {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /health {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    handle /ready {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # ── Evidence Chain (public — judges verify tamper-evident chain) ─
+    # No auth: demo data is synthetic. Judges can GET /evidence/{id}
+    # from their browser to independently verify hash chain integrity.
+    handle /evidence/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # NOTE: /api/export/evidence/* (keyed) is NOT exposed through Caddy.
+    # Use the public /evidence/* endpoint above for judge demos.
+
+    # NOTE: /heartbeat, /submit, and suppression write paths are NOT exposed
+    # through Caddy.
+    # Agents call Gateway directly on 127.0.0.1:8000.
+
+    # ── Landing Page (public, static) ──────────────────────────
+    handle /landing/* {
+        root * {$YITING_ROOT:/opt/yiting}/landing
+        uri strip_prefix /landing
+        file_server
+    }
+
+    # ── Demo Video (public, if hosted) ─────────────────────────
+    handle /video/* {
+        root * {$YITING_ROOT:/opt/yiting}/landing
+        uri strip_prefix /video
+        file_server
+    }
+
+    # ── Root and landing static assets ─────────────────────────
+    handle {
+        root * {$YITING_ROOT:/opt/yiting}/landing
+        try_files {path} /index.html
+        file_server
+    }
+}

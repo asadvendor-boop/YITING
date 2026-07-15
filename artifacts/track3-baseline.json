@@ -1,0 +1,46 @@
+{
+  "baseline": {
+    "incident_family": "metrics",
+    "label": "Measured one-person manual run (runbook-guided operator, no AI assistance), 2026-07-15 07:39:00-07:47:21 UTC",
+    "measured_seconds": 501,
+    "source_requirement": "Measured outside YITING with a stopwatch, saved run log, or single-agent/manual rehearsal notes."
+  },
+  "comparison_method": {
+    "fairness_rule": "Compare the same incident family and the same terminal criterion; when runsummary exposes incident_family, only matching runs are used.",
+    "formula": "baseline.measured_seconds / yiting.avg_total_resolution_seconds",
+    "hosted_verifier": "scripts/verify_deployment.py --require-speedup",
+    "terminal_criterion": "Terminal incident state with recovery verification when an action executes."
+  },
+  "gateway_env": {
+    "MANUAL_BASELINE_SECS": "501"
+  },
+  "generated_at": "2026-07-17T08:35:08.020676+00:00",
+  "project": "YITING",
+  "proof_type": "track3-manual-baseline",
+  "schema_version": 2,
+  "speedup_factor": 2.6,
+  "track3_requirements_checked": {
+    "disagreement_or_revision": true,
+    "distinct_role_handoffs": true,
+    "human_intervention": true,
+    "measured_speedup_over_baseline": true,
+    "recovery_verification": true
+  },
+  "yiting": {
+    "avg_total_resolution_seconds": 196,
+    "comparison_scope": "same-family runsummary runs",
+    "disagreement_events": 2,
+    "human_interventions": 1,
+    "incidents_measured": 2,
+    "matched_incident_ids": [
+      "INC-METRICS-8A7603",
+      "INC-RESTORE-934F30"
+    ],
+    "matched_run_count": 2,
+    "recovery_verified_count": 2,
+    "total_challenges_issued": 1,
+    "total_handoffs": 16,
+    "total_human_rejections": 1,
+    "total_plan_revisions": 1
+  }
+}

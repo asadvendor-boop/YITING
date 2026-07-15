@@ -1,0 +1,1600 @@
+{
+  "dataset_id": "yiting-track3-live-paired-v1",
+  "schema_version": 1,
+  "description": "Live paired single-Qwen-agent vs deployed-society eval. Ground truth is objective: findings/risks are keyword sets over the concrete evidence each victim fault emits; expected_action is the output of the project's own deterministic select_runbook() policy for that fault; decoy_claims flag unsupported assertions. 6 canonical fault families x replicates (replicates control for model sampling variance). Rubric copied verbatim from yiting-track3-paired-v1. FROZEN before any run.",
+  "fairness_controls": {
+    "live": true,
+    "deterministic": false,
+    "same_incidents_both_arms": true,
+    "same_model_family": "qwen3.7-plus (diagnosis tier)",
+    "solo_receives_complete_task": true,
+    "token_usage_measured_and_published_per_incident": true,
+    "rubric_frozen_before_run": true,
+    "no_retries_or_cherry_picking": true,
+    "raw_responses_preserved": true,
+    "expected_action_source": "select_runbook() policy output for each fault (system's own definition of correct; identical target for both arms)"
+  },
+  "post_run_corrections": [
+    "2026-07-17: fairness_controls originally declared equal_aggregate_token_cap_per_incident=4000, which the runner never enforced on either arm (society pipelines average ~6k tokens, solo ~2.4k). The false promise is replaced by the truthful control: per-incident token usage is measured and published in every row. No scores depend on this field.",
+    "2026-07-17: the runner initially scored solo evidence_chain at 0.55, contradicting scoring_method (solo: 1.0). All published rows were rescored to the spec (+0.045 to each solo final_score); see artifacts NOTES."
+  ],
+  "scoring_method": {
+    "finding_detected": "a required finding counts as detected if the arm's output text contains ANY of its match_keywords (case-insensitive)",
+    "risk_detected": "same keyword rule as findings",
+    "action_match": "arm's selected action_id == expected_action (policy-derived, same target both arms)",
+    "unsupported_claim": "count of decoy_claims whose keywords appear in the arm's output but are false for this fault",
+    "evidence_chain_score": "society: 1.0 if exported chain_valid else 0.0; solo: 1.0 (single structured response, no chain to validate) \u2014 reported separately, not used to advantage either arm on the disputed axis",
+    "final_score": "identical rubric formula and weights as yiting-track3-paired-v1"
+  },
+  "rubric": {
+    "finding_recall_weight": 0.4,
+    "risk_recall_weight": 0.25,
+    "action_match_weight": 0.25,
+    "evidence_chain_weight": 0.1,
+    "unsupported_claim_penalty_each": 0.125,
+    "success_threshold": 0.7
+  },
+  "scenarios": [
+    {
+      "id": "L3-001",
+      "scenario_type": "deploy",
+      "incident_family": "suspicious deploy",
+      "severity": "P1",
+      "expected_action": "rollback_deploy",
+      "required_findings": [
+        {
+          "name": "suspicious/unreviewed deploy correlated with the error spike",
+          "match_keywords": [
+            "deploy",
+            "release",
+            "rollout"
+          ]
+        },
+        {
+          "name": "affected service is payment-service",
+          "match_keywords": [
+            "payment-service",
+            "payment service"
+          ]
+        },
+        {
+          "name": "change came from an external contractor",
+          "match_keywords": [
+            "external",
+            "contractor",
+            "external-contractor-42"
+          ]
+        },
+        {
+          "name": "the release changed dependency versions",
+          "match_keywords": [
+            "dependency",
+            "dependencies",
+            "version"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "customer-facing payment failures",
+          "match_keywords": [
+            "customer",
+            "payment",
+            "checkout",
+            "revenue"
+          ]
+        },
+        {
+          "name": "destructive rollback needs human approval",
+          "match_keywords": [
+            "approval",
+            "human",
+            "rollback",
+            "destructive"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "database schema/pool failure",
+          "match_keywords": [
+            "schema",
+            "connection pool",
+            "database pool"
+          ]
+        },
+        {
+          "name": "dns/certificate problem",
+          "match_keywords": [
+            "dns",
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-002",
+      "scenario_type": "sentry",
+      "incident_family": "error spike",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "authentication/token validation failures",
+          "match_keywords": [
+            "auth",
+            "token",
+            "authentication",
+            "login"
+          ]
+        },
+        {
+          "name": "affected service is auth-service",
+          "match_keywords": [
+            "auth-service",
+            "auth service"
+          ]
+        },
+        {
+          "name": "error rate spiked to ~47%",
+          "match_keywords": [
+            "47",
+            "error rate",
+            "error-rate"
+          ]
+        },
+        {
+          "name": "correlates with release auth-service@4.8.2",
+          "match_keywords": [
+            "4.8.2",
+            "release",
+            "deploy"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "users cannot log in / session refresh fails",
+          "match_keywords": [
+            "login",
+            "session",
+            "customer",
+            "user"
+          ]
+        },
+        {
+          "name": "high-severity customer impact",
+          "match_keywords": [
+            "high",
+            "severe",
+            "p1",
+            "critical"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "payment-service rollback",
+          "match_keywords": [
+            "payment-service"
+          ]
+        },
+        {
+          "name": "certificate expiry",
+          "match_keywords": [
+            "certificate",
+            "tls expiry"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-003",
+      "scenario_type": "latency",
+      "incident_family": "latency degradation",
+      "severity": "P2",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "p99 latency exceeded ~6s",
+          "match_keywords": [
+            "p99",
+            "latency",
+            "6 second",
+            "6s"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "slow query checkout_items_by_customer",
+          "match_keywords": [
+            "slow query",
+            "checkout_items",
+            "query"
+          ]
+        },
+        {
+          "name": "load/capacity pressure",
+          "match_keywords": [
+            "load",
+            "capacity",
+            "scale",
+            "traffic"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "degraded user experience under load",
+          "match_keywords": [
+            "user",
+            "customer",
+            "experience",
+            "timeout"
+          ]
+        },
+        {
+          "name": "cascading timeout risk",
+          "match_keywords": [
+            "cascad",
+            "timeout",
+            "saturation"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "bad deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "bad deploy"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-004",
+      "scenario_type": "db",
+      "incident_family": "db pool exhaustion",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "database connection pool exhausted",
+          "match_keywords": [
+            "pool",
+            "connection",
+            "exhaust"
+          ]
+        },
+        {
+          "name": "affected service is user-service",
+          "match_keywords": [
+            "user-service",
+            "user service"
+          ]
+        },
+        {
+          "name": "pool size / utilization saturated",
+          "match_keywords": [
+            "pool size",
+            "utilization",
+            "100",
+            "saturat"
+          ]
+        },
+        {
+          "name": "idle connections holding capacity",
+          "match_keywords": [
+            "idle",
+            "capacity",
+            "increase pool"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "requests blocked waiting for connections",
+          "match_keywords": [
+            "blocked",
+            "wait",
+            "queue",
+            "reject"
+          ]
+        },
+        {
+          "name": "customer-facing user-service degradation",
+          "match_keywords": [
+            "customer",
+            "user",
+            "degrad"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "tls/certificate",
+          "match_keywords": [
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-005",
+      "scenario_type": "memory",
+      "incident_family": "memory pressure",
+      "severity": "P1",
+      "expected_action": "restart_service",
+      "required_findings": [
+        {
+          "name": "memory heap pressure / leak symptoms",
+          "match_keywords": [
+            "memory",
+            "heap",
+            "leak"
+          ]
+        },
+        {
+          "name": "affected service is worker-service",
+          "match_keywords": [
+            "worker-service",
+            "worker service"
+          ]
+        },
+        {
+          "name": "GC pause elevated (~980ms)",
+          "match_keywords": [
+            "gc",
+            "garbage",
+            "980",
+            "pause"
+          ]
+        },
+        {
+          "name": "restart needed to reclaim memory",
+          "match_keywords": [
+            "restart",
+            "rolling",
+            "reclaim"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "worker crash / OOM risk",
+          "match_keywords": [
+            "crash",
+            "oom",
+            "out of memory",
+            "kill"
+          ]
+        },
+        {
+          "name": "job processing degradation",
+          "match_keywords": [
+            "job",
+            "queue",
+            "throughput",
+            "worker"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "database pool",
+          "match_keywords": [
+            "connection pool",
+            "database pool"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-006",
+      "scenario_type": "cert",
+      "incident_family": "certificate expiry",
+      "severity": "P3",
+      "expected_action": "enable_maintenance_page",
+      "required_findings": [
+        {
+          "name": "TLS certificate nearing expiry (~46h)",
+          "match_keywords": [
+            "certificate",
+            "tls",
+            "expir",
+            "46"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "a valid standby certificate exists",
+          "match_keywords": [
+            "standby",
+            "valid",
+            "failover"
+          ]
+        },
+        {
+          "name": "renew certificate / reload TLS",
+          "match_keywords": [
+            "renew",
+            "reload",
+            "rotate"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "low severity \u2014 no active outage yet",
+          "match_keywords": [
+            "low",
+            "p3",
+            "mild",
+            "not yet",
+            "pre-empt"
+          ]
+        },
+        {
+          "name": "avoid destructive action for a non-urgent cert",
+          "match_keywords": [
+            "avoid",
+            "non-urgent",
+            "no rollback",
+            "maintenance"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "active payment outage",
+          "match_keywords": [
+            "payment outage",
+            "payment-service"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 1
+    },
+    {
+      "id": "L3-007",
+      "scenario_type": "deploy",
+      "incident_family": "suspicious deploy",
+      "severity": "P1",
+      "expected_action": "rollback_deploy",
+      "required_findings": [
+        {
+          "name": "suspicious/unreviewed deploy correlated with the error spike",
+          "match_keywords": [
+            "deploy",
+            "release",
+            "rollout"
+          ]
+        },
+        {
+          "name": "affected service is payment-service",
+          "match_keywords": [
+            "payment-service",
+            "payment service"
+          ]
+        },
+        {
+          "name": "change came from an external contractor",
+          "match_keywords": [
+            "external",
+            "contractor",
+            "external-contractor-42"
+          ]
+        },
+        {
+          "name": "the release changed dependency versions",
+          "match_keywords": [
+            "dependency",
+            "dependencies",
+            "version"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "customer-facing payment failures",
+          "match_keywords": [
+            "customer",
+            "payment",
+            "checkout",
+            "revenue"
+          ]
+        },
+        {
+          "name": "destructive rollback needs human approval",
+          "match_keywords": [
+            "approval",
+            "human",
+            "rollback",
+            "destructive"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "database schema/pool failure",
+          "match_keywords": [
+            "schema",
+            "connection pool",
+            "database pool"
+          ]
+        },
+        {
+          "name": "dns/certificate problem",
+          "match_keywords": [
+            "dns",
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-008",
+      "scenario_type": "sentry",
+      "incident_family": "error spike",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "authentication/token validation failures",
+          "match_keywords": [
+            "auth",
+            "token",
+            "authentication",
+            "login"
+          ]
+        },
+        {
+          "name": "affected service is auth-service",
+          "match_keywords": [
+            "auth-service",
+            "auth service"
+          ]
+        },
+        {
+          "name": "error rate spiked to ~47%",
+          "match_keywords": [
+            "47",
+            "error rate",
+            "error-rate"
+          ]
+        },
+        {
+          "name": "correlates with release auth-service@4.8.2",
+          "match_keywords": [
+            "4.8.2",
+            "release",
+            "deploy"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "users cannot log in / session refresh fails",
+          "match_keywords": [
+            "login",
+            "session",
+            "customer",
+            "user"
+          ]
+        },
+        {
+          "name": "high-severity customer impact",
+          "match_keywords": [
+            "high",
+            "severe",
+            "p1",
+            "critical"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "payment-service rollback",
+          "match_keywords": [
+            "payment-service"
+          ]
+        },
+        {
+          "name": "certificate expiry",
+          "match_keywords": [
+            "certificate",
+            "tls expiry"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-009",
+      "scenario_type": "latency",
+      "incident_family": "latency degradation",
+      "severity": "P2",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "p99 latency exceeded ~6s",
+          "match_keywords": [
+            "p99",
+            "latency",
+            "6 second",
+            "6s"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "slow query checkout_items_by_customer",
+          "match_keywords": [
+            "slow query",
+            "checkout_items",
+            "query"
+          ]
+        },
+        {
+          "name": "load/capacity pressure",
+          "match_keywords": [
+            "load",
+            "capacity",
+            "scale",
+            "traffic"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "degraded user experience under load",
+          "match_keywords": [
+            "user",
+            "customer",
+            "experience",
+            "timeout"
+          ]
+        },
+        {
+          "name": "cascading timeout risk",
+          "match_keywords": [
+            "cascad",
+            "timeout",
+            "saturation"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "bad deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "bad deploy"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-010",
+      "scenario_type": "db",
+      "incident_family": "db pool exhaustion",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "database connection pool exhausted",
+          "match_keywords": [
+            "pool",
+            "connection",
+            "exhaust"
+          ]
+        },
+        {
+          "name": "affected service is user-service",
+          "match_keywords": [
+            "user-service",
+            "user service"
+          ]
+        },
+        {
+          "name": "pool size / utilization saturated",
+          "match_keywords": [
+            "pool size",
+            "utilization",
+            "100",
+            "saturat"
+          ]
+        },
+        {
+          "name": "idle connections holding capacity",
+          "match_keywords": [
+            "idle",
+            "capacity",
+            "increase pool"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "requests blocked waiting for connections",
+          "match_keywords": [
+            "blocked",
+            "wait",
+            "queue",
+            "reject"
+          ]
+        },
+        {
+          "name": "customer-facing user-service degradation",
+          "match_keywords": [
+            "customer",
+            "user",
+            "degrad"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "tls/certificate",
+          "match_keywords": [
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-011",
+      "scenario_type": "memory",
+      "incident_family": "memory pressure",
+      "severity": "P1",
+      "expected_action": "restart_service",
+      "required_findings": [
+        {
+          "name": "memory heap pressure / leak symptoms",
+          "match_keywords": [
+            "memory",
+            "heap",
+            "leak"
+          ]
+        },
+        {
+          "name": "affected service is worker-service",
+          "match_keywords": [
+            "worker-service",
+            "worker service"
+          ]
+        },
+        {
+          "name": "GC pause elevated (~980ms)",
+          "match_keywords": [
+            "gc",
+            "garbage",
+            "980",
+            "pause"
+          ]
+        },
+        {
+          "name": "restart needed to reclaim memory",
+          "match_keywords": [
+            "restart",
+            "rolling",
+            "reclaim"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "worker crash / OOM risk",
+          "match_keywords": [
+            "crash",
+            "oom",
+            "out of memory",
+            "kill"
+          ]
+        },
+        {
+          "name": "job processing degradation",
+          "match_keywords": [
+            "job",
+            "queue",
+            "throughput",
+            "worker"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "database pool",
+          "match_keywords": [
+            "connection pool",
+            "database pool"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-012",
+      "scenario_type": "cert",
+      "incident_family": "certificate expiry",
+      "severity": "P3",
+      "expected_action": "enable_maintenance_page",
+      "required_findings": [
+        {
+          "name": "TLS certificate nearing expiry (~46h)",
+          "match_keywords": [
+            "certificate",
+            "tls",
+            "expir",
+            "46"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "a valid standby certificate exists",
+          "match_keywords": [
+            "standby",
+            "valid",
+            "failover"
+          ]
+        },
+        {
+          "name": "renew certificate / reload TLS",
+          "match_keywords": [
+            "renew",
+            "reload",
+            "rotate"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "low severity \u2014 no active outage yet",
+          "match_keywords": [
+            "low",
+            "p3",
+            "mild",
+            "not yet",
+            "pre-empt"
+          ]
+        },
+        {
+          "name": "avoid destructive action for a non-urgent cert",
+          "match_keywords": [
+            "avoid",
+            "non-urgent",
+            "no rollback",
+            "maintenance"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "active payment outage",
+          "match_keywords": [
+            "payment outage",
+            "payment-service"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 2
+    },
+    {
+      "id": "L3-013",
+      "scenario_type": "deploy",
+      "incident_family": "suspicious deploy",
+      "severity": "P1",
+      "expected_action": "rollback_deploy",
+      "required_findings": [
+        {
+          "name": "suspicious/unreviewed deploy correlated with the error spike",
+          "match_keywords": [
+            "deploy",
+            "release",
+            "rollout"
+          ]
+        },
+        {
+          "name": "affected service is payment-service",
+          "match_keywords": [
+            "payment-service",
+            "payment service"
+          ]
+        },
+        {
+          "name": "change came from an external contractor",
+          "match_keywords": [
+            "external",
+            "contractor",
+            "external-contractor-42"
+          ]
+        },
+        {
+          "name": "the release changed dependency versions",
+          "match_keywords": [
+            "dependency",
+            "dependencies",
+            "version"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "customer-facing payment failures",
+          "match_keywords": [
+            "customer",
+            "payment",
+            "checkout",
+            "revenue"
+          ]
+        },
+        {
+          "name": "destructive rollback needs human approval",
+          "match_keywords": [
+            "approval",
+            "human",
+            "rollback",
+            "destructive"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "database schema/pool failure",
+          "match_keywords": [
+            "schema",
+            "connection pool",
+            "database pool"
+          ]
+        },
+        {
+          "name": "dns/certificate problem",
+          "match_keywords": [
+            "dns",
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-014",
+      "scenario_type": "sentry",
+      "incident_family": "error spike",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "authentication/token validation failures",
+          "match_keywords": [
+            "auth",
+            "token",
+            "authentication",
+            "login"
+          ]
+        },
+        {
+          "name": "affected service is auth-service",
+          "match_keywords": [
+            "auth-service",
+            "auth service"
+          ]
+        },
+        {
+          "name": "error rate spiked to ~47%",
+          "match_keywords": [
+            "47",
+            "error rate",
+            "error-rate"
+          ]
+        },
+        {
+          "name": "correlates with release auth-service@4.8.2",
+          "match_keywords": [
+            "4.8.2",
+            "release",
+            "deploy"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "users cannot log in / session refresh fails",
+          "match_keywords": [
+            "login",
+            "session",
+            "customer",
+            "user"
+          ]
+        },
+        {
+          "name": "high-severity customer impact",
+          "match_keywords": [
+            "high",
+            "severe",
+            "p1",
+            "critical"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "payment-service rollback",
+          "match_keywords": [
+            "payment-service"
+          ]
+        },
+        {
+          "name": "certificate expiry",
+          "match_keywords": [
+            "certificate",
+            "tls expiry"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-015",
+      "scenario_type": "latency",
+      "incident_family": "latency degradation",
+      "severity": "P2",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "p99 latency exceeded ~6s",
+          "match_keywords": [
+            "p99",
+            "latency",
+            "6 second",
+            "6s"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "slow query checkout_items_by_customer",
+          "match_keywords": [
+            "slow query",
+            "checkout_items",
+            "query"
+          ]
+        },
+        {
+          "name": "load/capacity pressure",
+          "match_keywords": [
+            "load",
+            "capacity",
+            "scale",
+            "traffic"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "degraded user experience under load",
+          "match_keywords": [
+            "user",
+            "customer",
+            "experience",
+            "timeout"
+          ]
+        },
+        {
+          "name": "cascading timeout risk",
+          "match_keywords": [
+            "cascad",
+            "timeout",
+            "saturation"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "bad deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "bad deploy"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-016",
+      "scenario_type": "db",
+      "incident_family": "db pool exhaustion",
+      "severity": "P1",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "database connection pool exhausted",
+          "match_keywords": [
+            "pool",
+            "connection",
+            "exhaust"
+          ]
+        },
+        {
+          "name": "affected service is user-service",
+          "match_keywords": [
+            "user-service",
+            "user service"
+          ]
+        },
+        {
+          "name": "pool size / utilization saturated",
+          "match_keywords": [
+            "pool size",
+            "utilization",
+            "100",
+            "saturat"
+          ]
+        },
+        {
+          "name": "idle connections holding capacity",
+          "match_keywords": [
+            "idle",
+            "capacity",
+            "increase pool"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "requests blocked waiting for connections",
+          "match_keywords": [
+            "blocked",
+            "wait",
+            "queue",
+            "reject"
+          ]
+        },
+        {
+          "name": "customer-facing user-service degradation",
+          "match_keywords": [
+            "customer",
+            "user",
+            "degrad"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "tls/certificate",
+          "match_keywords": [
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-017",
+      "scenario_type": "memory",
+      "incident_family": "memory pressure",
+      "severity": "P1",
+      "expected_action": "restart_service",
+      "required_findings": [
+        {
+          "name": "memory heap pressure / leak symptoms",
+          "match_keywords": [
+            "memory",
+            "heap",
+            "leak"
+          ]
+        },
+        {
+          "name": "affected service is worker-service",
+          "match_keywords": [
+            "worker-service",
+            "worker service"
+          ]
+        },
+        {
+          "name": "GC pause elevated (~980ms)",
+          "match_keywords": [
+            "gc",
+            "garbage",
+            "980",
+            "pause"
+          ]
+        },
+        {
+          "name": "restart needed to reclaim memory",
+          "match_keywords": [
+            "restart",
+            "rolling",
+            "reclaim"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "worker crash / OOM risk",
+          "match_keywords": [
+            "crash",
+            "oom",
+            "out of memory",
+            "kill"
+          ]
+        },
+        {
+          "name": "job processing degradation",
+          "match_keywords": [
+            "job",
+            "queue",
+            "throughput",
+            "worker"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "deploy"
+          ]
+        },
+        {
+          "name": "database pool",
+          "match_keywords": [
+            "connection pool",
+            "database pool"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-018",
+      "scenario_type": "cert",
+      "incident_family": "certificate expiry",
+      "severity": "P3",
+      "expected_action": "enable_maintenance_page",
+      "required_findings": [
+        {
+          "name": "TLS certificate nearing expiry (~46h)",
+          "match_keywords": [
+            "certificate",
+            "tls",
+            "expir",
+            "46"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "a valid standby certificate exists",
+          "match_keywords": [
+            "standby",
+            "valid",
+            "failover"
+          ]
+        },
+        {
+          "name": "renew certificate / reload TLS",
+          "match_keywords": [
+            "renew",
+            "reload",
+            "rotate"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "low severity \u2014 no active outage yet",
+          "match_keywords": [
+            "low",
+            "p3",
+            "mild",
+            "not yet",
+            "pre-empt"
+          ]
+        },
+        {
+          "name": "avoid destructive action for a non-urgent cert",
+          "match_keywords": [
+            "avoid",
+            "non-urgent",
+            "no rollback",
+            "maintenance"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "active payment outage",
+          "match_keywords": [
+            "payment outage",
+            "payment-service"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 3
+    },
+    {
+      "id": "L3-019",
+      "scenario_type": "deploy",
+      "incident_family": "suspicious deploy",
+      "severity": "P1",
+      "expected_action": "rollback_deploy",
+      "required_findings": [
+        {
+          "name": "suspicious/unreviewed deploy correlated with the error spike",
+          "match_keywords": [
+            "deploy",
+            "release",
+            "rollout"
+          ]
+        },
+        {
+          "name": "affected service is payment-service",
+          "match_keywords": [
+            "payment-service",
+            "payment service"
+          ]
+        },
+        {
+          "name": "change came from an external contractor",
+          "match_keywords": [
+            "external",
+            "contractor",
+            "external-contractor-42"
+          ]
+        },
+        {
+          "name": "the release changed dependency versions",
+          "match_keywords": [
+            "dependency",
+            "dependencies",
+            "version"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "customer-facing payment failures",
+          "match_keywords": [
+            "customer",
+            "payment",
+            "checkout",
+            "revenue"
+          ]
+        },
+        {
+          "name": "destructive rollback needs human approval",
+          "match_keywords": [
+            "approval",
+            "human",
+            "rollback",
+            "destructive"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "database schema/pool failure",
+          "match_keywords": [
+            "schema",
+            "connection pool",
+            "database pool"
+          ]
+        },
+        {
+          "name": "dns/certificate problem",
+          "match_keywords": [
+            "dns",
+            "certificate",
+            "tls"
+          ]
+        }
+      ],
+      "replicate_index": 4
+    },
+    {
+      "id": "L3-020",
+      "scenario_type": "latency",
+      "incident_family": "latency degradation",
+      "severity": "P2",
+      "expected_action": "scale_up",
+      "required_findings": [
+        {
+          "name": "p99 latency exceeded ~6s",
+          "match_keywords": [
+            "p99",
+            "latency",
+            "6 second",
+            "6s"
+          ]
+        },
+        {
+          "name": "affected service is api-gateway",
+          "match_keywords": [
+            "api-gateway",
+            "api gateway"
+          ]
+        },
+        {
+          "name": "slow query checkout_items_by_customer",
+          "match_keywords": [
+            "slow query",
+            "checkout_items",
+            "query"
+          ]
+        },
+        {
+          "name": "load/capacity pressure",
+          "match_keywords": [
+            "load",
+            "capacity",
+            "scale",
+            "traffic"
+          ]
+        }
+      ],
+      "required_risks": [
+        {
+          "name": "degraded user experience under load",
+          "match_keywords": [
+            "user",
+            "customer",
+            "experience",
+            "timeout"
+          ]
+        },
+        {
+          "name": "cascading timeout risk",
+          "match_keywords": [
+            "cascad",
+            "timeout",
+            "saturation"
+          ]
+        }
+      ],
+      "decoy_claims": [
+        {
+          "name": "bad deploy rollback",
+          "match_keywords": [
+            "rollback",
+            "bad deploy"
+          ]
+        },
+        {
+          "name": "memory leak",
+          "match_keywords": [
+            "memory leak",
+            "heap"
+          ]
+        }
+      ],
+      "replicate_index": 4
+    }
+  ]
+}

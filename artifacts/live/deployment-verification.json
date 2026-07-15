@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "detail": "HTTP 200",
+      "name": "public gateway health",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public gateway readiness",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public stats shape",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public runsummary shape",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public agents online",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public skills",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200 via yiting-internal",
+      "name": "private victim health from gateway network",
+      "ok": true
+    }
+  ],
+  "generated_at": "2026-06-28T23:12:12.523955+00:00",
+  "passed": true,
+  "private_checks_source": "ECS docker exec from yiting-gateway-1 on yiting-internal network",
+  "project": "YITING",
+  "proof_type": "alibaba-ecs-live-verification",
+  "public_url": "https://yiting.47.84.232.193.sslip.io",
+  "schema_version": 1
+}

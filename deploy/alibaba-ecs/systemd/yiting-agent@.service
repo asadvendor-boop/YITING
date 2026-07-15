@@ -1,0 +1,15 @@
+[Unit]
+Description=YITING Agent %i
+After=yiting-gateway.service yiting-victim.service
+Requires=yiting-gateway.service yiting-victim.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/yiting
+EnvironmentFile=/opt/yiting/.env
+ExecStart=/opt/yiting/.venv/bin/python -m agents.%i
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

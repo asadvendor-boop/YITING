@@ -1,0 +1,42 @@
+{
+  "format": "yiting-http-smoke-v1",
+  "project": "YITING",
+  "base_url": "https://yiting.47.84.232.193.sslip.io",
+  "generated_at": "2026-06-28T23:06:53.012154+00:00",
+  "passed": true,
+  "checks": {
+    "health": {
+      "ok": true,
+      "status_code": 200
+    },
+    "readiness": {
+      "ok": true,
+      "status_code": 200,
+      "qwen_required": true,
+      "qwen_ready": true
+    },
+    "agent_skills": {
+      "ok": true,
+      "status_code": 200,
+      "count": 7
+    },
+    "stats": {
+      "ok": true,
+      "status_code": 200,
+      "keys": [
+        "active_incidents",
+        "avg_resolution_secs",
+        "challenges_issued",
+        "false_alarms_caught",
+        "human_decisions",
+        "resolved_incidents",
+        "suppressed_incidents",
+        "total_incidents"
+      ]
+    },
+    "runsummary": {
+      "ok": true,
+      "status_code": 200
+    }
+  }
+}

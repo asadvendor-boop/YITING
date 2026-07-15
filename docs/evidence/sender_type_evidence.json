@@ -1,0 +1,48 @@
+{
+  "room_id": "93ebbce8-927f-40c4-820c-d0969eda316c",
+  "agent_id": "dc8166ef-a06b-4749-84b1-8b0b72aa5289",
+  "messages": [
+    {
+      "sender_type": "User",
+      "sender_id": "66d99520-5480-4e7f-868c-eb4ef59da626",
+      "message_id": "ea84a97c-ae1c-49bc-a0d1-3fcd9896286f",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] hello testing sender_type"
+    },
+    {
+      "sender_type": "Agent",
+      "sender_id": "e2030361-97ef-4785-9f73-a15116955278",
+      "message_id": "6a84f9bf-526d-4c12-b904-539c69ff7b15",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] **AlertCard** for incident `7cfe46af-1"
+    },
+    {
+      "sender_type": "Agent",
+      "sender_id": "e2030361-97ef-4785-9f73-a15116955278",
+      "message_id": "3b7165b6-88a0-4038-807b-1dbd89f2c78d",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] **AlertCard** for incident `d832ea1f-5"
+    },
+    {
+      "sender_type": "Agent",
+      "sender_id": "e2030361-97ef-4785-9f73-a15116955278",
+      "message_id": "267119fe-71a0-47cf-bb8b-9259cdd6a30b",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] 4"
+    },
+    {
+      "sender_type": "Agent",
+      "sender_id": "e2030361-97ef-4785-9f73-a15116955278",
+      "message_id": "03bebe2d-0fe4-47a7-992a-c9eaae79dcdc",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] 4"
+    },
+    {
+      "sender_type": "User",
+      "sender_id": "66d99520-5480-4e7f-868c-eb4ef59da626",
+      "message_id": "4af0e910-0771-497b-bb13-8aa1f28f8c12",
+      "chat_id": "?",
+      "content_preview": "@[[dc8166ef-a06b-4749-84b1-8b0b72aa5289]] test 2"
+    }
+  ]
+}

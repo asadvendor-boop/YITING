@@ -1,0 +1,39 @@
+{
+  "artifact_class": "live_backup_restore",
+  "backup_dir_name": "20260628T182904Z",
+  "backups": [
+    {
+      "backup_name": "gateway.sqlite",
+      "label": "gateway",
+      "passed": true,
+      "restore": {
+        "integrity": "ok",
+        "ok": true,
+        "table_count": 11
+      },
+      "sha256": "ad0ff49d8561243947859190233059acfd04af3603403b99aca434bdd38f0f16",
+      "size_bytes": 151552,
+      "source_name": "yiting.db"
+    },
+    {
+      "backup_name": "victim.sqlite",
+      "label": "victim",
+      "passed": true,
+      "restore": {
+        "integrity": "ok",
+        "ok": true,
+        "table_count": 1
+      },
+      "sha256": "87eb59477118d33e0eae6f854c114379c26860620c0b6ad2bc7faeee03ba2caf",
+      "size_bytes": 12288,
+      "source_name": "heal_idempotency.db"
+    }
+  ],
+  "format": "yiting-backup-restore-v1",
+  "generated_at": "2026-06-28T18:29:04.965222+00:00",
+  "note": "Same-VM backups protect logical/container state, not total ECS host loss unless copied off-host.",
+  "passed": true,
+  "project": "YITING",
+  "submission_evidence": true,
+  "verified_live": true
+}

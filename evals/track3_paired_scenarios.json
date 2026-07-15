@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "dataset_id": "yiting-track3-paired-v1",
+  "description": "Fixed paired benchmark scenarios for comparing one Qwen agent against the full YITING agent society on the same incident inputs and rubric.",
+  "rubric_version": "track3-agent-society-rubric-v1",
+  "rubric": {
+    "finding_recall_weight": 0.4,
+    "risk_recall_weight": 0.25,
+    "action_match_weight": 0.25,
+    "evidence_chain_weight": 0.1,
+    "unsupported_claim_penalty_each": 0.125,
+    "success_threshold": 0.7
+  },
+  "scenarios": [
+    {
+      "id": "T3-001",
+      "incident_family": "suspicious deploy",
+      "alert": "Checkout 500s rose after release 42. Payment and identity checks are mostly green.",
+      "expected_action": "rollback_release",
+      "required_findings": ["post-deploy correlation", "checkout-only blast radius", "payment dependency healthy", "release 42 is the newest change"],
+      "required_risks": ["avoid database writes", "require human approval before rollback"],
+      "decoys": ["identity outage"]
+    },
+    {
+      "id": "T3-002",
+      "incident_family": "latency spike",
+      "alert": "API p95 latency crossed 4s while error rate stayed low and deploy logs are quiet.",
+      "expected_action": "scale_service",
+      "required_findings": ["latency without error spike", "no recent deploy correlation", "traffic burst", "capacity saturation"],
+      "required_risks": ["avoid rollback without deploy evidence", "bounded scale only"],
+      "decoys": ["bad release"]
+    },
+    {
+      "id": "T3-003",
+      "incident_family": "certificate expiry",
+      "alert": "Partner webhook TLS handshakes fail for one endpoint; internal traffic is healthy.",
+      "expected_action": "rotate_certificate",
+      "required_findings": ["partner-specific failure", "certificate expiry evidence", "internal health unaffected", "no code deploy correlation"],
+      "required_risks": ["avoid global restart", "notify partner owner"],
+      "decoys": ["database migration"]
+    },
+    {
+      "id": "T3-004",
+      "incident_family": "false alarm",
+      "alert": "Synthetic monitor reports one timeout during scheduled network maintenance.",
+      "expected_action": "close_false_alarm",
+      "required_findings": ["single monitor source", "scheduled maintenance window", "service health recovered", "no customer errors"],
+      "required_risks": ["avoid mutating production", "record suppression rationale"],
+      "decoys": ["widespread outage"]
+    },
+    {
+      "id": "T3-005",
+      "incident_family": "suspicious deploy",
+      "alert": "Inventory reads return stale values after a cache config release; write path is normal.",
+      "expected_action": "rollback_release",
+      "required_findings": ["release correlation", "read-only symptom", "write path healthy", "cache config changed"],
+      "required_risks": ["preserve write path", "require approval before rollback"],
+      "decoys": ["payment outage"]
+    },
+    {
+      "id": "T3-006",
+      "incident_family": "latency spike",
+      "alert": "Search service CPU is high, queue depth is rising, no deploy in four hours.",
+      "expected_action": "scale_service",
+      "required_findings": ["cpu saturation", "queue growth", "no deploy correlation", "read traffic surge"],
+      "required_risks": ["cap replica increase", "verify after scale"],
+      "decoys": ["schema rollback"]
+    },
+    {
+      "id": "T3-007",
+      "incident_family": "security signal",
+      "alert": "Admin endpoint shows repeated forbidden attempts from one IP; app health remains normal.",
+      "expected_action": "block_source_ip",
+      "required_findings": ["single source IP", "403 pattern", "no service degradation", "admin route targeted"],
+      "required_risks": ["avoid blocking broad CIDR", "escalate security audit"],
+      "decoys": ["capacity shortage"]
+    },
+    {
+      "id": "T3-008",
+      "incident_family": "data quality",
+      "alert": "Daily reconciliation mismatches began after mapping rule update; checkout still accepts orders.",
+      "expected_action": "disable_rule",
+      "required_findings": ["mapping rule correlation", "batch-only impact", "checkout path healthy", "reconciliation mismatches"],
+      "required_risks": ["avoid checkout rollback", "preserve audit trail"],
+      "decoys": ["network timeout"]
+    },
+    {
+      "id": "T3-009",
+      "incident_family": "suspicious deploy",
+      "alert": "Mobile login failures started ten minutes after auth policy release; web login remains healthy.",
+      "expected_action": "rollback_release",
+      "required_findings": ["auth policy release correlation", "mobile-only blast radius", "web login healthy", "token validation errors"],
+      "required_risks": ["avoid identity database mutation", "require approval before rollback"],
+      "decoys": ["payment timeout"]
+    },
+    {
+      "id": "T3-010",
+      "incident_family": "latency spike",
+      "alert": "Email queue age is rising after a marketing campaign; delivery errors remain below threshold.",
+      "expected_action": "scale_service",
+      "required_findings": ["queue age growth", "campaign traffic spike", "low error rate", "worker saturation"],
+      "required_risks": ["bounded scale only", "avoid message deletion"],
+      "decoys": ["bad database migration"]
+    },
+    {
+      "id": "T3-011",
+      "incident_family": "false alarm",
+      "alert": "One region reports packet loss, but all user-facing checks and traces are clean.",
+      "expected_action": "close_false_alarm",
+      "required_findings": ["single region signal", "user checks clean", "trace data clean", "no deploy correlation"],
+      "required_risks": ["avoid rollback", "keep monitoring"],
+      "decoys": ["global service outage"]
+    },
+    {
+      "id": "T3-012",
+      "incident_family": "certificate expiry",
+      "alert": "Outbound tax API calls fail with certificate verify errors after midnight.",
+      "expected_action": "rotate_certificate",
+      "required_findings": ["certificate verify error", "tax API only", "midnight expiry timing", "other outbound calls healthy"],
+      "required_risks": ["avoid broad restart", "confirm certificate owner"],
+      "decoys": ["checkout deploy"]
+    },
+    {
+      "id": "T3-013",
+      "incident_family": "data quality",
+      "alert": "Fraud score drift appears after threshold config changed; no runtime health alert fired.",
+      "expected_action": "disable_rule",
+      "required_findings": ["threshold config changed", "score drift", "runtime health normal", "fraud-only blast radius"],
+      "required_risks": ["preserve decision logs", "human review required"],
+      "decoys": ["cpu saturation"]
+    },
+    {
+      "id": "T3-014",
+      "incident_family": "security signal",
+      "alert": "Credential stuffing pattern is isolated to signup; login success rate is normal.",
+      "expected_action": "block_source_ip",
+      "required_findings": ["signup route targeted", "login healthy", "credential stuffing pattern", "small source set"],
+      "required_risks": ["avoid blocking real users", "security escalation"],
+      "decoys": ["bad release"]
+    },
+    {
+      "id": "T3-015",
+      "incident_family": "suspicious deploy",
+      "alert": "Catalog image failures began after CDN path rewrite release; API responses are valid.",
+      "expected_action": "rollback_release",
+      "required_findings": ["cdn path rewrite correlation", "images only", "api responses healthy", "new release timing"],
+      "required_risks": ["avoid api rollback", "approval before rollback"],
+      "decoys": ["database outage"]
+    },
+    {
+      "id": "T3-016",
+      "incident_family": "latency spike",
+      "alert": "Recommendation workers lag behind stream input after a traffic event; no deploy occurred.",
+      "expected_action": "scale_service",
+      "required_findings": ["worker lag", "traffic event", "no deploy correlation", "stream input growth"],
+      "required_risks": ["bounded scale only", "verify lag drains"],
+      "decoys": ["certificate expiry"]
+    },
+    {
+      "id": "T3-017",
+      "incident_family": "false alarm",
+      "alert": "Synthetic checkout failure matches a known test card and no real orders failed.",
+      "expected_action": "close_false_alarm",
+      "required_findings": ["known test card", "no real order failures", "single synthetic source", "service health normal"],
+      "required_risks": ["avoid production mutation", "document suppression"],
+      "decoys": ["payment provider outage"]
+    },
+    {
+      "id": "T3-018",
+      "incident_family": "certificate expiry",
+      "alert": "SAML metadata refresh fails for one enterprise customer due to expired signing cert.",
+      "expected_action": "rotate_certificate",
+      "required_findings": ["one customer affected", "expired signing cert", "saml metadata refresh", "core login healthy"],
+      "required_risks": ["avoid global auth rollback", "coordinate customer communication"],
+      "decoys": ["queue saturation"]
+    },
+    {
+      "id": "T3-019",
+      "incident_family": "data quality",
+      "alert": "Refund export duplicate rows started after SQL template update; live refund API is healthy.",
+      "expected_action": "disable_rule",
+      "required_findings": ["sql template update", "duplicate export rows", "live api healthy", "batch-only impact"],
+      "required_risks": ["preserve original exports", "avoid live refund mutation"],
+      "decoys": ["login outage"]
+    },
+    {
+      "id": "T3-020",
+      "incident_family": "security signal",
+      "alert": "Webhook signatures fail from one vendor after key rotation; other vendors pass.",
+      "expected_action": "rotate_secret",
+      "required_findings": ["one vendor affected", "key rotation timing", "signature failures", "other vendors healthy"],
+      "required_risks": ["avoid disabling signature verification", "human approval for secret rotation"],
+      "decoys": ["scale workers"]
+    }
+  ]
+}

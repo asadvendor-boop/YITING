@@ -1,0 +1,45 @@
+[project]
+name = "yiting"
+version = "0.1.0"
+description = "YITING: Qwen-powered incident council where specialized agents investigate each other's conclusions"
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+readme = "README.md"
+
+dependencies = [
+    "fastapi==0.136.3",
+    "uvicorn==0.49.0",
+    "pydantic>=2.0,<3.0",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.2",
+    "langchain-openai>=0.3.0",
+    "litellm>=1.80",
+    "jinja2==3.1.6",
+    "python-multipart==0.0.32",
+    "bcrypt==5.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.0.3",
+    "pytest-asyncio==1.4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["shared", "gateway", "agents"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/closure_run.py" = ["E402"]
+"scripts/human_demo.py" = ["E402"]
+"scripts/suspicious_deploy_demo.py" = ["E402"]
+"scripts/three_way_demo.py" = ["E402"]
+"scripts/verify_deployment.py" = ["E402"]
+"tests/test_replay_guard.py" = ["E402"]

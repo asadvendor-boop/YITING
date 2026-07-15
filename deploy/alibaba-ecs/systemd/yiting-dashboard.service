@@ -1,0 +1,15 @@
+[Unit]
+Description=YITING Dashboard
+After=yiting-gateway.service
+Requires=yiting-gateway.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/yiting/dashboard
+EnvironmentFile=/opt/yiting/.env
+ExecStart=/usr/bin/npm run start -- -p 3000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

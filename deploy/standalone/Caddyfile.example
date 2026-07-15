@@ -1,0 +1,19 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$YITING_DOMAIN} {
+	encode zstd gzip
+
+	handle /dashboard/api/chaos/activate {
+		reverse_proxy dashboard:3000
+	}
+
+	handle /health /ready /incidents* /evidence* /stats* /agent-skills* /api/* /approve* {
+		reverse_proxy gateway:8000
+	}
+
+	handle {
+		reverse_proxy dashboard:3000
+	}
+}

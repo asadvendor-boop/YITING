@@ -1,0 +1,215 @@
+name: yiting
+
+x-logging: &bounded-logging
+  driver: local
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+x-python-service: &python-service
+  image: ${YITING_PYTHON_IMAGE:?set YITING_PYTHON_IMAGE to an immutable image digest, for example registry.invalid/yiting/python@sha256:...}
+  env_file:
+    - ${YITING_ENV_FILE:?set YITING_ENV_FILE to a root-owned YITING env file}
+  environment: &runtime-env
+    APP_ENV: production
+    YITING_RUNTIME: docker-compose
+    GATEWAY_HOST: 0.0.0.0
+    GATEWAY_PORT: "8000"
+    GATEWAY_URL: http://gateway:8000
+    GATEWAY_DB_PATH: /data/yiting.db
+    VICTIM_APP_URL: http://victim:9000
+    HEAL_IDEMPOTENCY_DB: /data/heal_idempotency.db
+    PUBLIC_BASE_URL: ${YITING_PUBLIC_BASE_URL:?set YITING_PUBLIC_BASE_URL}
+    NEXT_PUBLIC_YITING_MODE: ${NEXT_PUBLIC_YITING_MODE:-judge}
+    YITING_RATE_LIMIT_PER_MINUTE: ${YITING_RATE_LIMIT_PER_MINUTE:-600}
+    YITING_RATE_LIMIT_WINDOW_SECONDS: ${YITING_RATE_LIMIT_WINDOW_SECONDS:-60}
+    YITING_TRUST_PROXY_HEADERS: "true"
+    YITING_MAX_CONCURRENT_WORKFLOWS: ${YITING_MAX_CONCURRENT_WORKFLOWS:-2}
+    YITING_MAX_AGENT_TURNS: ${YITING_MAX_AGENT_TURNS:-24}
+    YITING_MAX_TOOL_CALLS: ${YITING_MAX_TOOL_CALLS:-48}
+    YITING_DAILY_TOKEN_LIMIT: ${YITING_DAILY_TOKEN_LIMIT:-250000}
+    YITING_QWEN_USAGE_METER_PATH: /qwen-usage/yiting-qwen-usage.json
+  restart: unless-stopped
+  logging: *bounded-logging
+  networks:
+    - yiting-internal
+
+services:
+  gateway:
+    <<: *python-service
+    command: ["gateway"]
+    labels:
+      com.yiting.service: gateway
+      com.yiting.public: "true"
+    volumes:
+      - yiting-data:/data
+    networks:
+      yiting-edge:
+        aliases:
+          - yiting-gateway
+      yiting-internal:
+        aliases:
+          - gateway
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=5).read()"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  dashboard:
+    image: ${YITING_DASHBOARD_IMAGE:?set YITING_DASHBOARD_IMAGE to an immutable image digest, for example registry.invalid/yiting/dashboard@sha256:...}
+    env_file:
+      - ${YITING_ENV_FILE:?set YITING_ENV_FILE to a root-owned YITING env file}
+    environment:
+      GATEWAY_URL: http://gateway:8000
+      NEXT_PUBLIC_GATEWAY_URL: ${YITING_PUBLIC_BASE_URL:?set YITING_PUBLIC_BASE_URL}
+      NEXT_PUBLIC_YITING_MODE: ${NEXT_PUBLIC_YITING_MODE:-judge}
+    depends_on:
+      gateway:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *bounded-logging
+    labels:
+      com.yiting.service: dashboard
+      com.yiting.public: "true"
+    networks:
+      yiting-edge:
+        aliases:
+          - yiting-dashboard
+      yiting-internal: {}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/dashboard/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  victim:
+    <<: *python-service
+    command: ["victim"]
+    environment:
+      <<: *runtime-env
+      VICTIM_PORT: "9000"
+    volumes:
+      - yiting-victim-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/healthz', timeout=5).read()"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  triage:
+    <<: *python-service
+    command: ["agent"]
+    environment:
+      <<: *runtime-env
+      AGENT_ROLE: triage
+    networks:
+      - yiting-egress
+      - yiting-internal
+    volumes:
+      - yiting-qwen-usage:/qwen-usage
+    depends_on:
+      gateway:
+        condition: service_healthy
+      victim:
+        condition: service_healthy
+
+  diagnosis:
+    <<: *python-service
+    command: ["agent"]
+    environment:
+      <<: *runtime-env
+      AGENT_ROLE: diagnosis
+    networks:
+      - yiting-egress
+      - yiting-internal
+    volumes:
+      - yiting-qwen-usage:/qwen-usage
+    depends_on:
+      gateway:
+        condition: service_healthy
+      victim:
+        condition: service_healthy
+
+  safety_reviewer:
+    <<: *python-service
+    command: ["agent"]
+    environment:
+      <<: *runtime-env
+      AGENT_ROLE: safety_reviewer
+    networks:
+      - yiting-egress
+      - yiting-internal
+    volumes:
+      - yiting-qwen-usage:/qwen-usage
+    depends_on:
+      gateway:
+        condition: service_healthy
+      victim:
+        condition: service_healthy
+
+  commander:
+    <<: *python-service
+    command: ["agent"]
+    environment:
+      <<: *runtime-env
+      AGENT_ROLE: commander
+    networks:
+      - yiting-egress
+      - yiting-internal
+    volumes:
+      - yiting-qwen-usage:/qwen-usage
+    depends_on:
+      gateway:
+        condition: service_healthy
+      victim:
+        condition: service_healthy
+
+  operator:
+    <<: *python-service
+    command: ["agent"]
+    environment:
+      <<: *runtime-env
+      AGENT_ROLE: operator
+    networks:
+      - yiting-egress
+      - yiting-internal
+    volumes:
+      - yiting-qwen-usage:/qwen-usage
+    depends_on:
+      gateway:
+        condition: service_healthy
+      victim:
+        condition: service_healthy
+
+  recorder-heartbeat:
+    <<: *python-service
+    command: ["recorder-heartbeat"]
+    depends_on:
+      gateway:
+        condition: service_healthy
+
+volumes:
+  yiting-data:
+    labels:
+      com.yiting.purpose: sqlite-gateway-state
+  yiting-victim-data:
+    labels:
+      com.yiting.purpose: victim-idempotency-state
+  yiting-qwen-usage:
+    labels:
+      com.yiting.purpose: qwen-daily-token-circuit-breaker
+
+networks:
+  yiting-edge:
+    external: true
+    name: yiting-edge
+  yiting-egress:
+    external: true
+    name: yiting-egress
+  yiting-internal:
+    external: true
+    name: yiting-internal

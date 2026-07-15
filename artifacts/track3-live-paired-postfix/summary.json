@@ -1,0 +1,32 @@
+{
+  "artifact": "track3-live-paired-postfix",
+  "follow_up_to": "artifacts/track3-live-paired (frozen pre-fix run, spec-corrected chain scoring: society 0.8438 vs solo 0.7625; 10 wins / 4 ties / 6 losses)",
+  "build": "yiting-python:routingfix3-20260717 (deployed)",
+  "detector": "v3-authored-cards-only",
+  "pairs": 7,
+  "families": [
+    "db",
+    "deploy",
+    "latency",
+    "memory",
+    "sentry"
+  ],
+  "cert_family_excluded_reason": "cert (P3) incidents auto-execute via the low-risk PolicyAuthorization path; validation avoided adding executed incidents to the public stats. Cert scored 3/3 at 1.0 in the frozen pre-fix run.",
+  "solo": {
+    "mean_final_score": 0.8429,
+    "success_count": 2,
+    "total_unsupported_claims": 4,
+    "mean_tokens": 2441.4286
+  },
+  "society": {
+    "mean_final_score": 0.9679,
+    "success_count": 7,
+    "total_unsupported_claims": 0,
+    "mean_tokens": 6227.4286,
+    "chain_valid_count": 7
+  },
+  "chain_scoring_correction": "Initial runner implementation scored solo evidence_chain at 0.55 (the deterministic harness constant), contradicting this dataset's scoring_method (solo: 1.0, 'not used to advantage either arm'). Rows and this summary are rescored to the spec; the correction adds +0.045 to every solo final_score. Nothing else changed.",
+  "pairs_won_by_society": 5,
+  "ties": 2,
+  "pairs_won_by_solo": 0
+}

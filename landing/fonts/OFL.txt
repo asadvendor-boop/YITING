@@ -1,0 +1,8 @@
+Inter typeface — Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
+JetBrains Mono typeface — Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+Both families are licensed under the SIL Open Font License, Version 1.1.
+The full license text is available at: https://openfontlicense.org
+
+These woff2 files are latin-subset variable-weight builds, self-hosted with
+this project so the landing page makes no third-party network requests.

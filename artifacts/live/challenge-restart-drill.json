@@ -1,0 +1,62 @@
+{
+  "attempt_token_delta": 4047,
+  "attempt_tokens_before": 18377,
+  "card_count": 5,
+  "card_types": [
+    "AlertCard",
+    "TriageDecision",
+    "Assessment",
+    "Verdict",
+    "Assessment"
+  ],
+  "chain_valid": true,
+  "challenge_seen": true,
+  "diagnosis_restarted": true,
+  "diagnosis_stopped": true,
+  "incident_id": "INC-RESTORE-934F30",
+  "mode": "challengeable_assessment_via_gateway",
+  "passed": true,
+  "prior_failed_attempt": {
+    "attempt_token_delta": 0,
+    "attempt_tokens_before": 18377,
+    "passed": false,
+    "phase": "seed_challengeable_assessment",
+    "previous_attempt": {
+      "assessment_seen": true,
+      "card_count": 5,
+      "card_types": [
+        "AlertCard",
+        "TriageDecision",
+        "Assessment",
+        "Verdict",
+        "ResponsePlan"
+      ],
+      "chain_valid": true,
+      "challenge_seen": false,
+      "diagnosis_restarted": true,
+      "diagnosis_stopped": true,
+      "incident_id": "INC-RESTORE-924509",
+      "passed": false,
+      "restore_log_seen": false,
+      "revision2_assessment_seen": false,
+      "room_id": "room-4098a289-3c94-4ce9-b170-d62be2e7a40b",
+      "state": "PLANNED",
+      "token_delta": 5243,
+      "tokens_after": 18377,
+      "tokens_before": 13134
+    },
+    "returncode": 1,
+    "stderr": "syncio/base_events.py\", line 725, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/tmp/yiting_fire_challengeable.py\", line 49, in main\n    room_id = await recorder.create_room(\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n    )\n    ^\n  File \"/src/agents/recorder/__init__.py\", line 37, in create_room\n    room_id = await self.room_client.create_room(title, incident_id=incident_id)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/shared/incident_room.py\", line 49, in create_room\n    response.raise_for_status()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/app/.venv/lib/python3.13/site-packages/httpx/_models.py\", line 829, in raise_for_status\n    raise HTTPStatusError(message, request=request, response=self)\nhttpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'http://gateway:8000/api/rooms'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500\n",
+    "stdout": "",
+    "token_delta": 5243,
+    "tokens_after": 18377,
+    "tokens_before": 13134
+  },
+  "restore_log_seen": true,
+  "revision2_assessment_seen": true,
+  "room_id": "room-a0c58764-84c2-47cb-9bb7-a1ebbb056653",
+  "state": "ASSESSED",
+  "token_delta": 9290,
+  "tokens_after": 22424,
+  "tokens_before": 13134
+}

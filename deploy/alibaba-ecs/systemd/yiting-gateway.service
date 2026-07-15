@@ -1,0 +1,15 @@
+[Unit]
+Description=YITING Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/yiting
+EnvironmentFile=/opt/yiting/.env
+ExecStart=/opt/yiting/.venv/bin/uvicorn gateway.app:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

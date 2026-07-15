@@ -1,0 +1,81 @@
+{
+  "artifact_class": "live_qwen_smoke",
+  "base_url": "https://ws-q3cz9vsbgt4ypbbg.eu-central-1.maas.aliyuncs.com/compatible-mode/v1",
+  "capability_matrix": {
+    "openai/qwen3.6-flash": {
+      "chat": "required",
+      "structured_output": "required",
+      "tools": "not_used"
+    },
+    "openai/qwen3.7-plus": {
+      "chat": "required",
+      "structured_output": "required",
+      "tools": "not_used"
+    }
+  },
+  "checks": {
+    "commander": {
+      "capabilities": {
+        "chat": "required",
+        "structured_output": "required",
+        "tools": "not_used"
+      },
+      "latency_ms": 1679,
+      "message": "",
+      "ok": true,
+      "provider": "qwen",
+      "provider_request_id": null,
+      "requested_model": "openai/qwen3.7-plus",
+      "response_id": "chatcmpl-aca454c4-e006-975a-ad25-22c45d1f4e4b",
+      "returned_model": "qwen3.7-plus",
+      "role": "commander",
+      "usage": {
+        "completion_tokens": 27,
+        "prompt_tokens": 77,
+        "total_tokens": 104
+      }
+    },
+    "operator": {
+      "capabilities": {
+        "chat": "required",
+        "structured_output": "required",
+        "tools": "not_used"
+      },
+      "latency_ms": 1792,
+      "message": "",
+      "ok": true,
+      "provider": "qwen",
+      "provider_request_id": null,
+      "requested_model": "openai/qwen3.6-flash",
+      "response_id": "chatcmpl-f834d960-5cc5-9af5-9efc-45f5f6410797",
+      "returned_model": "qwen3.6-flash",
+      "role": "operator",
+      "usage": {
+        "completion_tokens": 26,
+        "prompt_tokens": 76,
+        "total_tokens": 102
+      }
+    }
+  },
+  "generated_at": "2026-06-28T17:50:02.057559+00:00",
+  "model": "openai/qwen3.6-flash",
+  "passed": true,
+  "project": "YITING",
+  "proof_type": "qwen-cloud-smoke",
+  "provider": "qwen",
+  "response": {
+    "message": "",
+    "ok": true,
+    "provider": "qwen",
+    "provider_request_id": null,
+    "response_id": "chatcmpl-f834d960-5cc5-9af5-9efc-45f5f6410797",
+    "usage": {
+      "completion_tokens": 26,
+      "prompt_tokens": 76,
+      "total_tokens": 102
+    }
+  },
+  "schema_version": 1,
+  "submission_evidence": true,
+  "verified_live": true
+}

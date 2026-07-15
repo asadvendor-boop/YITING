@@ -1,0 +1,246 @@
+{
+  "checks": [
+    {
+      "detail": "status=ok",
+      "name": "local gateway health",
+      "ok": true
+    },
+    {
+      "detail": "qwen_ready=true, required=True",
+      "name": "local gateway readiness",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "local victim health",
+      "ok": true
+    },
+    {
+      "detail": "stats shape ok",
+      "name": "local stats shape",
+      "ok": true
+    },
+    {
+      "detail": "runsummary shape ok, runs=3, speedup=2.6, handoffs=22, challenges=1, human_rejections=1, disagreement_events=2, human_interventions=2, recovery_verified=3",
+      "name": "local Track 3 runsummary shape",
+      "ok": true
+    },
+    {
+      "detail": "6/6 online, required 5",
+      "name": "local roles online >= 5",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public landing page",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 200",
+      "name": "public dashboard route",
+      "ok": true
+    },
+    {
+      "detail": "status=ok",
+      "name": "public gateway health",
+      "ok": true
+    },
+    {
+      "detail": "qwen_ready=true, required=True",
+      "name": "public gateway readiness",
+      "ok": true
+    },
+    {
+      "detail": "stats shape ok",
+      "name": "public stats shape",
+      "ok": true
+    },
+    {
+      "detail": "runsummary shape ok, runs=3, speedup=2.6, handoffs=22, challenges=1, human_rejections=1, disagreement_events=2, human_interventions=2, recovery_verified=3",
+      "name": "public Track 3 runsummary shape",
+      "ok": true
+    },
+    {
+      "detail": "6/6 online, required 5",
+      "name": "public roles online >= 5",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 403 disabled",
+      "name": "public chaos disabled",
+      "ok": true
+    }
+  ],
+  "final_proof_command": "make submission-proof PUBLIC_BASE_URL=... HERO_INCIDENT_ID=... MEASURED_SINGLE_AGENT_SECS=... BASELINE_INCIDENT_FAMILY=...",
+  "generated_at": "2026-07-15T08:52:46.501392+00:00",
+  "passed": true,
+  "primary_track": "Track 3: Agent Society",
+  "project": "YITING",
+  "proof_type": "alibaba-ecs-deployment-verification",
+  "rubric_proof": [
+    {
+      "criterion": "Stage One viability",
+      "hosted_checks": [
+        "public landing page",
+        "public gateway health",
+        "public gateway readiness",
+        "public Track 3 runsummary shape"
+      ],
+      "weight": "pass/fail"
+    },
+    {
+      "criterion": "Innovation & AI Creativity",
+      "hosted_checks": [
+        "agent skill registry in source/dashboard",
+        "challenge and revision proof through evidence collaboration"
+      ],
+      "weight": "30%"
+    },
+    {
+      "criterion": "Technical Depth & Engineering",
+      "hosted_checks": [
+        "public evidence chain",
+        "public roles online",
+        "local certification before deployment"
+      ],
+      "weight": "30%"
+    },
+    {
+      "criterion": "Problem Value & Impact",
+      "hosted_checks": [
+        "public Track 3 runsummary shape",
+        "speedup_factor > 1 when --require-speedup is enabled",
+        "nonzero handoffs, disagreement events, human interventions, and recovery verification"
+      ],
+      "weight": "25%"
+    },
+    {
+      "criterion": "Presentation & Documentation",
+      "hosted_checks": [
+        "public landing page",
+        "public dashboard route",
+        "sanitized deployment proof report"
+      ],
+      "weight": "15%"
+    }
+  ],
+  "schema_version": 1,
+  "submission_artifacts": {
+    "baseline_proof": "artifacts/track3-baseline.json",
+    "blog_post_prize": "docs/BLOG_POST.md",
+    "final_checklist": "docs/FINAL_SUBMISSION_CHECKLIST.md",
+    "final_proof_index": "artifacts/final-proof-index.md",
+    "hero_evidence": "artifacts/hero-evidence.json",
+    "judge_packet": "docs/JUDGE_PACKET.md",
+    "qwen_smoke_proof": "artifacts/qwen-smoke.json",
+    "source_package": "dist/yiting-submission-source.zip",
+    "submission_form": "docs/SUBMISSION_FORM.md"
+  },
+  "targets": {
+    "gateway_url": "http://gateway:8000",
+    "incident_id": "",
+    "min_roles": 5,
+    "public_url": "https://yiting.47.84.232.193.sslip.io",
+    "require_public_read_only": true,
+    "require_speedup": true,
+    "victim_url": "http://victim:9000"
+  },
+  "track3_proof_summary": {
+    "core_claim": "YITING is a Qwen-backed emergency change council: specialized agents divide incident-response work, exchange sealed evidence, challenge weak reasoning, negotiate revisions with a human, and execute only the final authorized envelope.",
+    "judge_routes": [
+      "/agent-skills",
+      "/evidence/{incident_id}",
+      "/stats/runsummary",
+      "docs/TRACK3_SCORECARD.md",
+      "artifacts/qwen-smoke.json",
+      "artifacts/track3-baseline.json",
+      "artifacts/track3-paired-benchmark.json",
+      "artifacts/deployment-verification.json",
+      "artifacts/hero-evidence.json",
+      "artifacts/final-proof-index.md",
+      "artifacts/live/backup-restore.json",
+      "artifacts/live/reboot-persistence.json",
+      "artifacts/live/uptime-monitoring.json",
+      "artifacts/live/submission-links.json"
+    ],
+    "primary_track": "Track 3: Agent Society",
+    "required_showcase": {
+      "dialogue_and_negotiation": {
+        "claim": "Agents and humans exchange room messages plus sealed cards before execution.",
+        "evidence": [
+          "incident room transcript",
+          "Verdict(CHALLENGE)",
+          "StructuredApproval(REJECTED)"
+        ]
+      },
+      "disagreement_resolution": {
+        "claim": "Safety Reviewer can force Diagnosis revision; humans can force Commander replanning.",
+        "evidence": [
+          "/stats/runsummary.disagreement_events",
+          "/evidence/{incident_id}.collaboration.challenges",
+          "/evidence/{incident_id}.collaboration.human_decisions"
+        ]
+      },
+      "distinct_capabilities": {
+        "claim": "Seven roles expose separate inspectable MCP-style skill contracts, Qwen Cloud use, Track 3 proof categories, guardrails, judge demo cues, and evidence artifacts.",
+        "evidence": [
+          "/agent-skills",
+          "shared/skill_registry.py",
+          "docs/TRACK3_AGENT_SOCIETY.md"
+        ],
+        "required_fields": [
+          "tool_name",
+          "input_schema",
+          "output_schema",
+          "qwen_cloud_use",
+          "track3_requirement",
+          "judge_demo_cue",
+          "deterministic_guardrail",
+          "evidence_artifact"
+        ]
+      },
+      "execution_conflict_resolution": {
+        "claim": "Operator executes only the exact approved action envelope and fails closed on stale or modified actions.",
+        "evidence": [
+          "/evidence/{incident_id}.collaboration.execution_conflict_control.exact_match",
+          "agents/operator/__init__.py",
+          "docs/ENGINEERING_PROOF.md"
+        ]
+      },
+      "hero_evidence_standard": {
+        "claim": "The final hero incident must be the requested EXECUTED incident, include ActionReceipt, and show sealed disagreement or human rejection.",
+        "evidence": [
+          "artifacts/hero-evidence.json.incident_id == HERO_INCIDENT_ID",
+          "artifacts/hero-evidence.json.state == EXECUTED",
+          "ActionReceipt",
+          "Verdict(CHALLENGE) or StructuredApproval(REJECTED)",
+          "scripts/final_proof_index.py",
+          "scripts/verify_deployment.py"
+        ],
+        "required_final_check": "incident_id match, state EXECUTED, ActionReceipt present, and Verdict(CHALLENGE) or StructuredApproval(REJECTED) present"
+      },
+      "measurable_efficiency_gain": {
+        "claim": "The paired benchmark proves society quality and reliability gains over a single-agent baseline. Hosted speed is a separate timing claim accepted only when measured same-family runsummary rows prove speedup_factor > 1.",
+        "evidence": [
+          "artifacts/track3-paired-benchmark.json",
+          "artifacts/track3-paired-benchmark-raw.json",
+          "artifacts/track3-paired-benchmark.csv",
+          "scripts/track3_paired_benchmark.py",
+          "artifacts/track3-baseline.json",
+          "/stats/runsummary.speedup_factor",
+          "scripts/track3_baseline.py",
+          "scripts/verify_deployment.py --require-speedup"
+        ],
+        "reproducible_pairing_check": "scripts/track3_paired_benchmark.py compares the same fixed scenarios, same rubric, same model identity, and token-normalized metrics for single_agent vs full_yiting_society. It does not claim speed improvement.",
+        "required_final_check": "paired benchmark shows higher task success, lower unsupported-claim rate, more risks detected, better final score, better quality per token, and speed_improvement_claimed=false; any hosted speed claim also requires speedup_factor > 1, matched same-family run IDs include the hero incident, and disagreement_events > 0 within that same family comparison"
+      },
+      "task_decomposition": {
+        "claim": "Each incident advances through role-owned cards instead of one generic agent.",
+        "evidence": [
+          "/evidence/{incident_id}.collaboration.role_sequence",
+          "AlertCard -> TriageDecision -> Assessment -> Verdict -> ResponsePlan -> authorization -> ActionReceipt"
+        ]
+      }
+    }
+  }
+}

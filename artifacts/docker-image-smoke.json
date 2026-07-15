@@ -1,0 +1,42 @@
+{
+  "format": "yiting-docker-image-smoke-v1",
+  "project": "YITING",
+  "generated_at": "2026-06-24T20:36:27.660889+00:00",
+  "passed": true,
+  "checks": {
+    "gateway": {
+      "ok": true,
+      "container": "yiting-image-smoke-1782333380-5456-gateway",
+      "image": "yiting-python:preflight",
+      "health_status": 200,
+      "ready_status": 200,
+      "qwen_required": false
+    },
+    "victim": {
+      "ok": true,
+      "container": "yiting-image-smoke-1782333380-5456-victim",
+      "image": "yiting-python:preflight",
+      "status_code": 200,
+      "source": "live_synthetic_telemetry"
+    },
+    "dashboard": {
+      "ok": true,
+      "container": "yiting-image-smoke-1782333380-5456-dashboard",
+      "image": "yiting-dashboard:preflight",
+      "status_code": 200,
+      "base_path": "/dashboard"
+    },
+    "production_negative": {
+      "ok": true,
+      "container": "yiting-image-smoke-1782333380-5456-prod-negative",
+      "image": "yiting-python:preflight",
+      "status_code": 503,
+      "qwen_required": true,
+      "qwen_ready": false,
+      "errors": [
+        "DASHSCOPE_API_KEY is required; legacy QWEN_API_KEY is accepted only as a compatibility alias",
+        "QWEN_BASE_URL must be set explicitly; DASHSCOPE_BASE_URL is accepted only as a compatibility alias"
+      ]
+    }
+  }
+}
